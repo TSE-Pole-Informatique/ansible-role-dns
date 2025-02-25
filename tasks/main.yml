@@ -25,7 +25,6 @@
   ansible.builtin.include_tasks:
     file: 'systemd-resolved.yml'
   when: systemd_resolved_config.stat.exists | bool
-  become: true
 
 ## network-manager
 
@@ -40,7 +39,6 @@
   ansible.builtin.include_tasks:
     file: 'network-manager.yml'
   when: network_manager_config.stat.exists
-  become: true
 
 ## resolvconf and others
 
@@ -66,4 +64,3 @@
   when:
     - network_manager_running.rc != 0
     - systemd_resolved_running.rc != 0
-  become: true
