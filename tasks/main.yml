@@ -9,6 +9,8 @@
       or ( ansible_distribution == "CentOS" and ansible_distribution_major_version|int in [7, 8] )
       or ( ansible_distribution == "RedHat" and ansible_distribution_major_version|int in [8, 9] )
       or ( ansible_distribution == "Fedora" and ansible_distribution_major_version|int in [38, 39] )
+      or ( ansible_distribution == "Debian" and ansible_distribution_version|int in [9, 10, 11, 12] )
+  become: true
 
 ## systemd-resolved
 
@@ -17,11 +19,13 @@
     path: /etc/systemd/resolved.conf
   register: systemd_resolved_config
   check_mode: false
+  become: true
 
 - name: Update DNS servers for systemd-resolvd
   ansible.builtin.include_tasks:
     file: 'systemd-resolved.yml'
   when: systemd_resolved_config.stat.exists | bool
+  become: true
 
 ## network-manager
 
@@ -30,11 +34,13 @@
     path: /etc/NetworkManager/conf.d
   register: network_manager_config
   check_mode: false
+  become: true
 
 - name: Configure network manager
   ansible.builtin.include_tasks:
     file: 'network-manager.yml'
   when: network_manager_config.stat.exists
+  become: true
 
 ## resolvconf and others
 
@@ -44,6 +50,7 @@
   changed_when: false
   register: network_manager_running
   check_mode: false
+  become: true
 
 - name: Check if systemd-resolve runs
   ansible.builtin.shell: pgrep systemd-resolve
@@ -51,6 +58,7 @@
   changed_when: false
   register: systemd_resolved_running
   check_mode: false
+  become: true
 
 - name: Resolvconf configuration
   ansible.builtin.include_tasks:
@@ -58,3 +66,4 @@
   when:
     - network_manager_running.rc != 0
     - systemd_resolved_running.rc != 0
+  become: true

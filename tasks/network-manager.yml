@@ -1,6 +1,7 @@
 # vim: ai et ts=2 st=2 sw=2 :
 ---
 - name: Configure domains for network manager
+  become: true
   community.general.ini_file:
     path: /etc/NetworkManager/conf.d/global-dns.conf
     section: global-dns
@@ -11,6 +12,7 @@
   register: conf_nm_domains
 
 - name: Configure domains for network manager
+  become: true
   community.general.ini_file:
     path: /etc/NetworkManager/conf.d/global-dns.conf
     section: global-dns-domain-*
@@ -21,6 +23,7 @@
   register: conf_nm_dns
 
 - name: Check if network manager runs
+  become: true
   ansible.builtin.shell: pgrep NetworkManager
   failed_when: false
   changed_when: false
@@ -28,6 +31,7 @@
   check_mode: false
 
 - name: Reload network manager
+  become: true
   ansible.builtin.service:
     name: NetworkManager
     state: reloaded

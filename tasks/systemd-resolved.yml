@@ -1,6 +1,7 @@
 # vim: ai et ts=2 st=2 sw=2 :
 ---
 - name: Add DNS servers
+  become: true
   community.general.ini_file:
     path: /etc/systemd/resolved.conf
     section: Resolve
@@ -12,6 +13,7 @@
   when: dns_servers | length > 0
 
 - name: Add DNS fallback server
+  become: true
   community.general.ini_file:
     path: /etc/systemd/resolved.conf
     section: Resolve
@@ -23,6 +25,7 @@
   when: dns_servers | length > 1
 
 - name: Enable DNSSEC
+  become: true
   community.general.ini_file:
     path: /etc/systemd/resolved.conf
     section: Resolve
@@ -33,6 +36,7 @@
   register: conf_dnssec
 
 - name: Add search domains
+  become: true
   community.general.ini_file:
     path: /etc/systemd/resolved.conf
     section: Resolve
@@ -43,6 +47,7 @@
   register: conf_domains
 
 - name: Check if network manager runs
+  become: true
   ansible.builtin.shell: pgrep systemd-resolve
   failed_when: false
   changed_when: false
@@ -50,6 +55,7 @@
   check_mode: false
 
 - name: Reload systemd-resolved
+  become: true
   ansible.builtin.systemd:
     name: systemd-resolved
     state: restarted
